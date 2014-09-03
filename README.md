@@ -1,7 +1,6 @@
-mndataopener
+Four Year Graduation Rates by Race/Ethnicity in MN
 ============
 
-County school plans data from http://www.health.state.mn.us/divs/chs/mss/singleyr/index.html
-Census Metropolitan Statistical Area data from http://www.census.gov/population/metro/data/def.html
+http://w20.education.state.mn.us/MDEAnalytics/Data.jsp
 
-http://www.gelicia.com/mndataopener/
+http://www.louisgarcia.com
