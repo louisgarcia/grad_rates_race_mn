@@ -1,0 +1,97 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/2000/REC-xhtml1-20000126/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />   
+    <title>Four-Year Graduation Rate by Race/Ethnicity</title> 
+
+  <!-- 
+  CSS and HTML Template by miss monorom http://www.intensivstation.ch
+  This work is licensed under a Creative Commons License http://creativecommons.org/licenses/by/1.0/
+  -->
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:400,600' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="css/main.css">
+    <script src="js/lib/d3.v3.min.js"></script>
+    <script src="js/lib/topojson.v1.min.js"></script>
+    <script src="js/lib/underscore-min.js"></script>
+    <script type = "text/javascript" src="js/main.js"></script>
+  </head> 
+
+  <body onload="loadData();">
+   <h1>Four-Year Graduation Rate by Rate/Ethnicity</h1>
+    <div id="left"></div>
+    <div id="content">
+      <div id="intro">
+        <p>The Four-Year Graduation Rate is a four-year, on-time graduation rate based on a cohort of first time ninth grade students plus transfers into the cohort within the four year period minus transfers out of the cohort within the four year period.</p>
+        <p>The darker blue counties count as a Metropolitan Statistical Area as defined by the Census (<a href="http://www.census.gov/population/metro/data/def.html">source</a>). Data can be viewed by individual county, by a specific metropolitan region, by all metropolitan or non-metropolitan counties grouped together, or state-wide.</p>
+      </div>
+      <div id="mapDiv">
+        <svg id="mapMain"></svg>
+      </div>
+      <div id="countyInfo">
+        <div id="dataToggle">
+          <input type="radio" name="displayOptions" value="state" onclick="toggleDisplay('state');"> By Region<br/>
+            <select id="statewideOptions" onchange="getSelectToggleRegion();" disabled>
+            </select> <br/>
+          <input type="radio" name="displayOptions" value="county" onclick="toggleDisplay('county');" checked> By County <br/>
+            <select id="countyOptions" onchange="getSelectToggleCounty();" >
+            </select> <br/><br/>
+          <input type="checkbox" name="cycle" value="cycle" id="cycleToggle"> Cycle every 10 seconds <br/> <br/>
+        </div>
+        <div id="selectedData">
+          <div id="selectedTitle"></div>
+          <div id="selectedContent"></div>
+          <div class="resultsTable">
+            <table>
+                <tr>
+                  <th></th>
+                  <th>American Indian / Alaskan Native</th>
+                  <th>Asian / Pacific Islander</th>
+                  <th>Hispanic</th>
+                  <th>Black</th>
+                  <th>White</th>
+                </tr>
+                <tr>
+                  <td>Graduated</td>
+                  <td><span class="AIANgrad"></span></td>
+                  <td><span class="APIgrad"></span></td>
+                  <td><span class="Hgrad"></span></td>
+                  <td><span class="BLAgrad"></span></td>
+                  <td><span class="Wgrad"></span></td>
+                </tr>
+                <tr>
+                  <td>Dropped Out</td>
+                  <td><span class="AIANdrop"></span></td>
+                  <td><span class="APIdrop"></span></td>
+                  <td><span class="Hdrop"></span></td>
+                  <td><span class="BLAdrop"></span></td>
+                  <td><span class="Wdrop"></span></td>
+                </tr>
+                <tr>
+                  <td>Continuing</td>
+                  <td><span class="AIANcont"></span></td>
+                  <td><span class="APIcont"></span></td>
+                  <td><span class="Hcont"></span></td>
+                  <td><span class="BLAcont"></span></td>
+                  <td><span class="Wcont"></span></td>
+                </tr>
+                <tr>
+                  <td>Unknown</td>
+                  <td><span class="AIANunk"></span></td>
+                  <td><span class="APIunk"></span></td>
+                  <td><span class="Hunk"></span></td>
+                  <td><span class="BLAunk"></span></td>
+                  <td><span class="Wunk"></span></td>
+                </tr>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="footer">
+      <p>Created by <a href="http://www.louisgarcia.com">Louis Garcia</a>. Special thanks to Kristina Durivage for providing the code to have a clickable Minnesota map.
+      <p>Student data retreived from <a href="http://w20.education.state.mn.us/MDEAnalytics/Data.jsp">Minnesota Department of Education</a>
+    </div>
+  </body>
+</html>
