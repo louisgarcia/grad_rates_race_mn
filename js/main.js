@@ -50,8 +50,9 @@ function countyObj(countyInfo){
 } 
 
 var statewideOptionList = [
-	{condensedName: 'all', friendlyName: 'State-wide'},
+	{condensedName: 'Statewide', friendlyName: 'Statewide'},
 	{condensedName: 'metro', friendlyName: 'All Metropolitan Counties'},
+	{condensedName: 'nonmetro', friendlyName: 'All Non-Metropolitan Counties'},
 	{condensedName: 'MinneapolisStPaulBloomingtonMNWI', friendlyName: 'Minneapolis-St. Paul-Bloomington MN-WI Metro Region'},
 	{condensedName: 'StCloudMN', friendlyName: '    St. Cloud MN Metro Region'},
 	{condensedName: 'MankatoNorthMankatoMN', friendlyName: '    Mankato-North Mankato MN Metro Region'},
@@ -59,12 +60,11 @@ var statewideOptionList = [
 	{condensedName: 'FargoNDMN', friendlyName: '    Fargo ND-MN Metro Region'},
 	{condensedName: 'RochesterMN', friendlyName: '    Rochester MN Metro Region'},
 	{condensedName: 'LaCrosseOnalaskaWIMN', friendlyName: '    La Crosse-Onalaska WI-MN Metro Region'},
-	{condensedName: 'GrandForksNDMN', friendlyName: '    Grand Forks ND-MN Metro Region'},
-	{condensedName: 'nonmetro', friendlyName: 'All Non-Metropolitan Counties'}
+	{condensedName: 'GrandForksNDMN', friendlyName: '    Grand Forks ND-MN Metro Region'}
+	
 ];
 
 var allCountyInfo = [];
-var allRegionInfo = [];
 var countyJson = {};
 
 var parseDate = d3.time.format("%Y");
@@ -91,14 +91,11 @@ function loadData(){
 
 	d3.json("data/mncounties.json", function(errorJ, mn) {
 		countyJson=mn;
-		d3.csv("data/regionGradRates.csv", function(errorC, regionData){
-			allRegionInfo=regionData;
 			d3.csv("data/gradrates.csv", function(errorC, studentData){
 				allCountyInfo = studentData;
 
-				//build the county list in a separate variable so we can sort them easily
-				//remove the last element, which is statewide
-				var countyList = studentData.map(function(d){return d.countyName;}).slice(0, -1).sort();
+				//Wacky hack to remove the last 11 of the excel sheet which are region and statewide data
+				var countyList = studentData.map(function(d){return d.countyName;}).slice(0, -11).sort();
 				d3.select("select#countyOptions").selectAll('option').data(countyList).enter()
 				.append("option").attr("value", function(d){return d;}).text(function(d){return d;});
 
@@ -142,7 +139,6 @@ function loadData(){
 
 				getSelectToggleCounty();
 			});
-		});
 	});
 }
 
@@ -174,15 +170,15 @@ function toggleCounty(countyInfo){
 function toggleRegion(regionType){
 	d3.select("#highlightPath").remove();
 
-	if (regionType == 'all'){
+	if (regionType == 'Statewide'){
 		d3.selectAll("svg#mapMain").append("path")
 		.datum(topojson.mesh(countyJson, countyJson.objects.counties, function(a, b) { return a === b; }))
 		.attr({
 			"id": "highlightPath",
 			"d": path
 		});
-
-		displayStateData();
+		var stateInfo = _.find(allCountyInfo, function(d){return d.countyName == 'Statewide';});
+		displayCountyData(stateInfo);
 	}
 	else if (regionType == 'metro'){
 		d3.selectAll("svg#mapMain").append("path")
@@ -198,8 +194,8 @@ function toggleRegion(regionType){
 			"id": "highlightPath",
 			"d": path
 		});
-
-		displayMetroOrRuralData(true);
+		var regionInfo = _.find(allCountyInfo, function(d){return d.countyName == 'Metro';});
+		displayCountyData(regionInfo);
 	}
 	else if (regionType == 'nonmetro'){
 		d3.selectAll("svg#mapMain").append("path")
@@ -215,8 +211,8 @@ function toggleRegion(regionType){
 			"id": "highlightPath",
 			"d": path
 		});
-
-		displayMetroOrRuralData(false);
+		var regionInfo = _.find(allCountyInfo, function(d){return d.countyName == 'NonMetro';});
+		displayCountyData(regionInfo);
 	}
 	else  { //specific metro region
 		d3.selectAll("svg#mapMain").append("path")
@@ -232,8 +228,8 @@ function toggleRegion(regionType){
 			"id": "highlightPath",
 			"d": path
 		});
-
-		displayMetroRegionData(regionType);
+		var regionInfo = _.find(allCountyInfo, function(d){return d.countyName == regionType;});
+		displayCountyData(regionInfo);
 	}
 }
 
@@ -256,7 +252,6 @@ function displayCountyData(countyInfo){
     thisHeight = 204 - margin.top - margin.bottom;
 
 	var chartInfo = countyObj(countyInfo);
-
 	d3.select("div#selectedTitle>h2").remove();
 	d3.selectAll("div#selectedContent>p").remove();
 	d3.selectAll("svg#selectedChart>g").remove();
@@ -268,6 +263,12 @@ function displayCountyData(countyInfo){
 		if (countyInfo.metro === "") {
 			return "Not classified as a metropolitan county.";
 		}
+		else if (countyInfo.metro === "Statewide") {
+			return "Statewide Results";
+		}
+		else if (countyInfo.metro === "Region") {
+			return "Region Results"
+		}
 		else {
 			return _.find(statewideOptionList, function(d){ return d.condensedName == countyInfo.metro;}).friendlyName;
 		}
@@ -275,119 +276,21 @@ function displayCountyData(countyInfo){
 
 	//content.append("p").text("Ranks " + countyInfo.rank + "/87 for number of students who plan to go to college or beyond.");
 	d3.select("span.AIANgrad").text(function(d) {
-		if(chartInfo['AIAN']['Tot'] > 0) {return chartInfo['AIAN']['Grad'] + " " + Math.round(chartInfo['AIAN']['Grad'] / chartInfo['AIAN']['Tot'] * 100) + "%"}
-		else {return "0"};});
+		if(chartInfo['AIAN']['Tot'] > 0) {return Math.round(chartInfo['AIAN']['Grad'] / chartInfo['AIAN']['Tot'] * 100) + "%"}
+		else {return ""};});
 	d3.select("span.APIgrad").text(function(d) {
-		if(chartInfo['API']['Tot'] > 0) {return chartInfo['API']['Grad'] + " " + Math.round(chartInfo['API']['Grad'] / chartInfo['API']['Tot'] * 100) + "%"}
-		else {return "0"};});
+		if(chartInfo['API']['Tot'] > 0) {return Math.round(chartInfo['API']['Grad'] / chartInfo['API']['Tot'] * 100) + "%"}
+		else {return ""};});
 	d3.select("span.Hgrad").text(function(d) {
-		if(chartInfo['H']['Tot'] > 0) {return chartInfo['H']['Grad'] + " " + Math.round(chartInfo['H']['Grad'] / chartInfo['H']['Tot'] * 100) + "%"}
-		else {return "0"};});
+		if(chartInfo['H']['Tot'] > 0) {return Math.round(chartInfo['H']['Grad'] / chartInfo['H']['Tot'] * 100) + "%"}
+		else {return ""};});
 	d3.select("span.BLAgrad").text(function(d) {
-		if(chartInfo['BLA']['Tot'] > 0) {return chartInfo['BLA']['Grad'] + " " + Math.round(chartInfo['BLA']['Grad'] / chartInfo['BLA']['Tot'] * 100) + "%"}
-		else {return "0"};});
+		if(chartInfo['BLA']['Tot'] > 0) {return Math.round(chartInfo['BLA']['Grad'] / chartInfo['BLA']['Tot'] * 100) + "%"}
+		else {return ""};});
 	d3.select("span.Wgrad").text(function(d) {
-		if(chartInfo['W']['Tot'] > 0) {return chartInfo['W']['Grad'] + " " + Math.round(chartInfo['W']['Grad'] / chartInfo['W']['Tot'] * 100) + "%"}
-		else {return "0"};});
-
-	d3.select("span.AIANdrop").text(function(d) {
-		if(chartInfo['AIAN']['Tot'] > 0) {return chartInfo['AIAN']['Drop'] + " " + Math.round(chartInfo['AIAN']['Drop'] / chartInfo['AIAN']['Tot'] * 100) + "%"}
-		else {return "0"};});
-	d3.select("span.APIdrop").text(function(d) {
-		if(chartInfo['API']['Tot'] > 0) {return chartInfo['API']['Drop'] + " " + Math.round(chartInfo['API']['Drop'] / chartInfo['API']['Tot'] * 100) + "%"}
-		else {return "0"};});
-	d3.select("span.Hdrop").text(function(d) {
-		if(chartInfo['H']['Tot'] > 0) {return chartInfo['H']['Drop'] + " " + Math.round(chartInfo['H']['Drop'] / chartInfo['H']['Tot'] * 100) + "%"}
-		else {return "0"};});
-	d3.select("span.BLAdrop").text(function(d) {
-		if(chartInfo['BLA']['Tot'] > 0) {return chartInfo['BLA']['Drop'] + " " + Math.round(chartInfo['BLA']['Drop'] / chartInfo['BLA']['Tot'] * 100) + "%"}
-		else {return "0"};});
-	d3.select("span.Wdrop").text(function(d) {
-		if(chartInfo['W']['Tot'] > 0) {return chartInfo['W']['Drop'] + " " + Math.round(chartInfo['W']['Drop'] / chartInfo['W']['Tot'] * 100) + "%"}
-		else {return "0"};});
-
-	d3.select("span.AIANcont").text(function(d) {
-		if(chartInfo['AIAN']['Tot'] > 0) {return chartInfo['AIAN']['Cont'] + " " + Math.round(chartInfo['AIAN']['Cont'] / chartInfo['AIAN']['Tot'] * 100) + "%"}
-		else {return "0"};});
-	d3.select("span.APIcont").text(function(d) {
-		if(chartInfo['API']['Tot'] > 0) {return chartInfo['API']['Cont'] + " " + Math.round(chartInfo['API']['Cont'] / chartInfo['API']['Tot'] * 100) + "%"}
-		else {return "0"};});
-	d3.select("span.Hcont").text(function(d) {
-		if(chartInfo['H']['Tot'] > 0) {return chartInfo['H']['Cont'] + " " + Math.round(chartInfo['H']['Cont'] / chartInfo['H']['Tot'] * 100) + "%"}
-		else {return "0"};});
-	d3.select("span.BLAcont").text(function(d) {
-		if(chartInfo['BLA']['Tot'] > 0) {return chartInfo['BLA']['Cont'] + " " + Math.round(chartInfo['BLA']['Cont'] / chartInfo['BLA']['Tot'] * 100) + "%"}
-		else {return "0"};});
-	d3.select("span.Wcont").text(function(d) {
-		if(chartInfo['W']['Tot'] > 0) {return chartInfo['W']['Cont'] + " " + Math.round(chartInfo['W']['Cont'] / chartInfo['W']['Tot'] * 100) + "%"}
-		else {return "0"};});
-
-	d3.select("span.AIANunk").text(function(d) {
-		if(chartInfo['AIAN']['Tot'] > 0) {return chartInfo['AIAN']['Unk'] + " " + Math.round(chartInfo['AIAN']['Unk'] / chartInfo['AIAN']['Tot'] * 100) + "%"}
-		else {return "0"};});
-	d3.select("span.APIunk").text(function(d) {
-		if(chartInfo['API']['Tot'] > 0) {return chartInfo['API']['Unk'] + " " + Math.round(chartInfo['API']['Unk'] / chartInfo['API']['Tot'] * 100) + "%"}
-		else {return "0"};});
-	d3.select("span.Hunk").text(function(d) {
-		if(chartInfo['H']['Tot'] > 0) {return chartInfo['H']['Unk'] + " " + Math.round(chartInfo['H']['Unk'] / chartInfo['H']['Tot'] * 100) + "%"}
-		else {return "0"};});
-	d3.select("span.BLAunk").text(function(d) {
-		if(chartInfo['BLA']['Tot'] > 0) {return chartInfo['BLA']['Unk'] + " " + Math.round(chartInfo['BLA']['Unk'] / chartInfo['BLA']['Tot'] * 100) + "%"}
-		else {return "0"};});
-	d3.select("span.Wunk").text(function(d) {
-		if(chartInfo['W']['Tot'] > 0) {return chartInfo['W']['Unk'] + " " + Math.round(chartInfo['W']['Unk'] / chartInfo['W']['Tot'] * 100) + "%"}
-		else {return "0"};});
-
+		if(chartInfo['W']['Tot'] > 0) {return Math.round(chartInfo['W']['Grad'] / chartInfo['W']['Tot'] * 100) + "%"}
+		else {return ""};});
 	}
-
-function displayMetroRegionData(regionName){
-	var longRegionName = _.find(statewideOptionList, function(d){ return d.condensedName == regionName;}).friendlyName;
-	var regionData = _.find(allRegionInfo, function(d){ return d.regionName == regionName;});
-
-	d3.select("div#selectedTitle>h2").remove();
-	d3.selectAll("div#selectedContent>p").remove();
-	d3.selectAll("svg#selectedChart>g").remove();
-
-	d3.select("div#selectedTitle").append("h2").text(longRegionName);
-
-	var content = d3.select("div#selectedContent");
-
-	content.append("p").text("This region is ranked " + regionData.regionRank + "/8 for having " + Math.floor(regionData.collOrByond) + "% of students interested in going to college or beyond.");
-}
-
-function displayMetroOrRuralData(isMetro){
-	var metroDataPct = Math.floor(_.find(allRegionInfo, function(d){if (d.regionName == 'Metro')  { return d;}}).collOrByond);
-	var nonMetroDataPct = Math.floor(_.find(allRegionInfo, function(d){if (d.regionName == 'NonMetro')  { return d;}}).collOrByond);
-
-	d3.select("div#selectedTitle>h2").remove();
-	d3.selectAll("div#selectedContent>p").remove();
-	d3.selectAll("svg#selectedChart>g").remove();
-
-	d3.select("div#selectedTitle").append("h2").text(function(){return isMetro ? "All Metropolitan Regions" : "All Non-Metropolitan Regions";});
-	var content = d3.select("div#selectedContent");
-	content.append("p").text((isMetro ? "Metro" : "Non-Metro") + " regions had an average of " + (isMetro? metroDataPct : nonMetroDataPct)+ "% of students express interest in attending college or beyond.");
-
-	var difference = isMetro? metroDataPct - nonMetroDataPct : nonMetroDataPct - metroDataPct;
-	var compareWord = difference > 0 ? "more" : "less";
-	difference = Math.abs(difference); //todo the same as
-	content.append("p").text("This is " + difference + "% " + compareWord + " than " + (isMetro ? "non-metro" : "metro") + " regions.");
-}
-
-function displayStateData(){
-	var stateInfo = _.find(allCountyInfo, function(d){return d.countyName == 'Statewide';});
-
-	d3.select("div#selectedTitle>h2").remove();
-	d3.selectAll("div#selectedContent>p").remove();
-	d3.selectAll("svg#selectedChart>g").remove();
-
-	d3.select("div#selectedTitle").append("h2").text("Minnesota");
-	var content = d3.select("div#selectedContent");
-
-	var avgStudents = d3.mean([stateInfo['pop-1998'], stateInfo['pop-2001'], stateInfo['pop-2004'], stateInfo['pop-2007'], stateInfo['pop-2010']]);
-	var avgPct = d3.mean([stateInfo['collOrByond-1998'], stateInfo['collOrByond-2001'], stateInfo['collOrByond-2004'], stateInfo['collOrByond-2007'], stateInfo['collOrByond-2010']]);
-	content.append("p").text("On average, " + Math.floor(avgStudents)+ " students were surveyed a year.");
-	content.append("p").text("Of those students, on average " + Math.floor(avgPct) + "% planned to go to college or beyond.");
-}
 
 window.setInterval(function(){
   if(document.getElementById('cycleToggle').checked){
