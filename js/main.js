@@ -10,11 +10,16 @@ Array.prototype.returnCountyInfo = function(county){
 
 function countyObj(countyInfo){
   var outArr = [];
-  var AIANArr = [];
-  var APIArr = [];
-  var BLAArr = [];
-  var HArr = [];
-  var WArr = [];
+  var IAN_G = [];
+  var IAN_T = [];
+  var API_G = [];
+  var API_T = [];
+  var BLA_G = [];
+  var BLA_T = [];
+  var HIS_G = [];
+  var HIS_T = [];
+  var WHI_G = [];
+  var WHI_T = [];
   
   for(var prop in countyInfo){
     if (typeof countyInfo[prop] === 'string'){
@@ -24,61 +29,80 @@ function countyObj(countyInfo){
       else if (prop == 'metro'){
         outArr.metro = countyInfo[prop];
       }
-      else if (prop.substring(0,4) == 'AIAN'){
-      	AIANArr[prop.substring(5)] = Number(countyInfo[prop]);
+      else if (prop.substring(0,8) == 'IAN_GRAD'){
+      	IAN_G[prop.substring(9)] = Number(countyInfo[prop]);
       }
-      else if (prop.substring(0,3) == 'API'){
-      	APIArr[prop.substring(4)] = Number(countyInfo[prop]);
+      else if (prop.substring(0,8) == 'IAN_TOTL'){
+      	IAN_T[prop.substring(9)] = Number(countyInfo[prop]);
       }
-      else if (prop.substring(0,3) == 'BLA'){
-      	BLAArr[prop.substring(4)] = Number(countyInfo[prop]);
+      else if (prop.substring(0,8) == 'API_GRAD'){
+      	API_G[prop.substring(9)] = Number(countyInfo[prop]);
       }
-      else if (prop.substring(0,1) == 'H'){
-      	HArr[prop.substring(2)] = Number(countyInfo[prop]);
+      else if (prop.substring(0,8) == 'API_TOTL'){
+      	API_T[prop.substring(9)] = Number(countyInfo[prop]);
       }
-      else if (prop.substring(0,1) == 'W'){
-      	WArr[prop.substring(2)] = Number(countyInfo[prop]);
+      else if (prop.substring(0,8) == 'BLA_GRAD'){
+      	BLA_G[prop.substring(9)] = Number(countyInfo[prop]);
+      }
+      else if (prop.substring(0,8) == 'BLA_TOTL'){
+      	BLA_T[prop.substring(9)] = Number(countyInfo[prop]);
+      }
+      else if (prop.substring(0,8) == 'HIS_GRAD'){
+      	HIS_G[prop.substring(9)] = Number(countyInfo[prop]);
+      }
+      else if (prop.substring(0,8) == 'HIS_TOTL'){
+      	HIS_T[prop.substring(9)] = Number(countyInfo[prop]);
+      }
+      else if (prop.substring(0,8) == 'WHI_GRAD'){
+      	WHI_G[prop.substring(9)] = Number(countyInfo[prop]);
+      }
+      else if (prop.substring(0,8) == 'WHI_TOTL'){
+      	WHI_T[prop.substring(9)] = Number(countyInfo[prop]);
       }
     }
   }
-  outArr.AIAN = AIANArr;
-  outArr.API = APIArr;
-  outArr.BLA = BLAArr;
-  outArr.H = HArr;
-  outArr.W = WArr;
+  outArr.IAN_G = IAN_G;
+  outArr.IAN_T = IAN_T;
+  outArr.API_G = API_G;
+  outArr.API_T = API_T;
+  outArr.BLA_G = BLA_G;
+  outArr.BLA_T = BLA_T;
+  outArr.HIS_G = HIS_G;
+  outArr.HIS_T = HIS_T;
+  outArr.WHI_G = WHI_G;
+  outArr.WHI_T = WHI_T;
   return outArr;   
 } 
 
 var statewideOptionList = [
 	{condensedName: 'Statewide', friendlyName: 'Statewide'},
-	{condensedName: 'metro', friendlyName: 'All Metropolitan Counties'},
-	{condensedName: 'nonmetro', friendlyName: 'All Non-Metropolitan Counties'},
-	{condensedName: 'MinneapolisStPaulBloomingtonMNWI', friendlyName: 'Minneapolis-St. Paul-Bloomington MN-WI Metro Region'},
-	{condensedName: 'StCloudMN', friendlyName: '    St. Cloud MN Metro Region'},
-	{condensedName: 'MankatoNorthMankatoMN', friendlyName: '    Mankato-North Mankato MN Metro Region'},
-	{condensedName: 'DuluthMNWI', friendlyName: '    Duluth MN-WI Metro Region'},
-	{condensedName: 'FargoNDMN', friendlyName: '    Fargo ND-MN Metro Region'},
-	{condensedName: 'RochesterMN', friendlyName: '    Rochester MN Metro Region'},
-	{condensedName: 'LaCrosseOnalaskaWIMN', friendlyName: '    La Crosse-Onalaska WI-MN Metro Region'},
-	{condensedName: 'GrandForksNDMN', friendlyName: '    Grand Forks ND-MN Metro Region'}
-	
+	{condensedName: 'metro', friendlyName: 'All Metro'},
+	{condensedName: 'nonmetro', friendlyName: 'All Non-Metro'},
+	{condensedName: 'MinneapolisStPaulBloomingtonMNWI', friendlyName: 'Twin Cities Metro'},
+	{condensedName: 'StCloudMN', friendlyName: '    St. Cloud Metro'},
+	{condensedName: 'MankatoNorthMankatoMN', friendlyName: '    Mankato Metro'},
+	{condensedName: 'DuluthMNWI', friendlyName: '    Duluth Metro'},
+	{condensedName: 'FargoNDMN', friendlyName: '    Fargo Metro'},
+	{condensedName: 'RochesterMN', friendlyName: '    Rochester Metro'},
+	{condensedName: 'LaCrosseOnalaskaWIMN', friendlyName: '    La Crosse-Onalaska Metro'},
+	{condensedName: 'GrandForksNDMN', friendlyName: '    Grand Forks Metro'}	
 ];
 
 var allCountyInfo = [];
 var countyJson = {};
 
 var parseDate = d3.time.format("%Y");
-var years = ["2013"];
+var years = ["2003","2004","2005","2006","2007","2008","2009","2010","2011","2012","2013"];
 years = years.map(function(d){return parseDate.parse(d);});
 
-var width = 400,height = 430;
+var width = 400,height = 550;
 
 //other functions use the projection/path for highlighting certain sections of the map
 var projection = d3.geo.conicEqualArea()
 	.center([1.5, 46.5])
 	.rotate([95, 0])
 	.parallels([29.5, 45.5])
-	.scale(4000)
+	.scale(3800)
 	.translate([width / 2, height / 2]);
 
 var path = d3.geo.path()
@@ -91,17 +115,16 @@ function loadData(){
 
 	d3.json("data/mncounties.json", function(errorJ, mn) {
 		countyJson=mn;
-			d3.csv("data/gradrates.csv", function(errorC, studentData){
+			d3.csv("data/gradRatesTrend.csv", function(errorC, studentData){
 				allCountyInfo = studentData;
+				//build the metro area list
+				d3.select("select#statewideOptions").selectAll('option').data(statewideOptionList).enter()
+				.append("option").attr("value", function(d){return d.condensedName;}).text(function(d){return d.friendlyName;});
 
 				//Wacky hack to remove the last 11 of the excel sheet which are region and statewide data
 				var countyList = studentData.map(function(d){return d.countyName;}).slice(0, -11).sort();
 				d3.select("select#countyOptions").selectAll('option').data(countyList).enter()
 				.append("option").attr("value", function(d){return d;}).text(function(d){return d;});
-
-				//build the metro area list
-				d3.select("select#statewideOptions").selectAll('option').data(statewideOptionList).enter()
-				.append("option").attr("value", function(d){return d.condensedName;}).text(function(d){return d.friendlyName;});
 
 				svg.selectAll(".county")
 				.data(topojson.feature(mn, mn.objects.counties).features).enter().append("path")
@@ -137,7 +160,7 @@ function loadData(){
 					"d": path
 				});
 
-				getSelectToggleCounty();
+				getSelectToggleRegion();
 			});
 	});
 }
@@ -247,49 +270,120 @@ function toggleDisplay(displayType) {
 }
 
 function displayCountyData(countyInfo){
-	var margin = {top: 20, right: 20, bottom: 30, left: 78},
-    thisWidth = 348 - margin.left - margin.right,
-    thisHeight = 204 - margin.top - margin.bottom;
+	var margin = {top: 20, right: 20, bottom: 10, left: 30},
+    thisWidth = 400 - margin.left - margin.right,
+    thisHeight = 380 - margin.top - margin.bottom;
 
 	var chartInfo = countyObj(countyInfo);
-	d3.select("div#selectedTitle>h2").remove();
-	d3.selectAll("div#selectedContent>p").remove();
+	
 	d3.selectAll("svg#selectedChart>g").remove();
 
-	d3.select("div#selectedTitle").append("h2").text(countyInfo.countyName);
-	var content = d3.select("div#selectedContent");
-
-	content.append("p").text(function(d){
-		if (countyInfo.metro === "") {
-			return "Not classified as a metropolitan county.";
-		}
-		else if (countyInfo.metro === "Statewide") {
-			return "Statewide Results";
-		}
-		else if (countyInfo.metro === "Region") {
-			return "Region Results"
-		}
-		else {
-			return _.find(statewideOptionList, function(d){ return d.condensedName == countyInfo.metro;}).friendlyName;
-		}
-	});
-
-	//content.append("p").text("Ranks " + countyInfo.rank + "/87 for number of students who plan to go to college or beyond.");
 	d3.select("span.AIANgrad").text(function(d) {
-		if(chartInfo['AIAN']['Tot'] > 0) {return Math.round(chartInfo['AIAN']['Grad'] / chartInfo['AIAN']['Tot'] * 100) + "%"}
+		if(chartInfo['IAN_G']['2013'] > 0) {return Math.round(chartInfo['IAN_G']['2013'] / chartInfo['IAN_T']['2013'] * 100) + "%"}
 		else {return ""};});
 	d3.select("span.APIgrad").text(function(d) {
-		if(chartInfo['API']['Tot'] > 0) {return Math.round(chartInfo['API']['Grad'] / chartInfo['API']['Tot'] * 100) + "%"}
+		if(chartInfo['API_G']['2013'] > 0) {return Math.round(chartInfo['API_G']['2013'] / chartInfo['API_T']['2013'] * 100) + "%"}
 		else {return ""};});
 	d3.select("span.Hgrad").text(function(d) {
-		if(chartInfo['H']['Tot'] > 0) {return Math.round(chartInfo['H']['Grad'] / chartInfo['H']['Tot'] * 100) + "%"}
+		if(chartInfo['HIS_G']['2013'] > 0) {return Math.round(chartInfo['HIS_G']['2013'] / chartInfo['HIS_T']['2013'] * 100) + "%"}
 		else {return ""};});
 	d3.select("span.BLAgrad").text(function(d) {
-		if(chartInfo['BLA']['Tot'] > 0) {return Math.round(chartInfo['BLA']['Grad'] / chartInfo['BLA']['Tot'] * 100) + "%"}
+		if(chartInfo['BLA_G']['2013'] > 0) {return Math.round(chartInfo['BLA_G']['2013'] / chartInfo['BLA_T']['2013'] * 100) + "%"}
 		else {return ""};});
 	d3.select("span.Wgrad").text(function(d) {
-		if(chartInfo['W']['Tot'] > 0) {return Math.round(chartInfo['W']['Grad'] / chartInfo['W']['Tot'] * 100) + "%"}
+		if(chartInfo['WHI_G']['2013'] > 0) {return Math.round(chartInfo['WHI_G']['2013'] / chartInfo['WHI_T']['2013'] * 100) + "%"}
 		else {return ""};});
+
+	//code for the line chart starts here
+	var x = d3.time.scale()
+		.range([0, thisWidth])
+		.domain(d3.extent(years));
+
+	var y = d3.scale.linear()
+		.range([thisHeight, 0])
+		.domain([0, 100]);
+
+	var xAxis = d3.svg.axis()
+		.scale(x)
+		.tickValues(years)
+		.orient("bottom");
+
+	var yAxis = d3.svg.axis()
+		.scale(y)
+		.orient("left");
+
+	var IANline = d3.svg.line()
+		.defined(function(d) { return chartInfo.IAN_G[d.getFullYear()] != ""; })
+		.x(function(d,i) {return x(years[i]);})
+		.y(function(d) {if(chartInfo.IAN_G[d.getFullYear()] > 0) {return y(Math.round(chartInfo.IAN_G[d.getFullYear()] / chartInfo.IAN_T[d.getFullYear()] * 100, 2)); }
+						else {return y(null)}})
+		.interpolate("basis");
+
+	var HISline = d3.svg.line()
+		.defined(function(d) { return chartInfo.HIS_G[d.getFullYear()] != ""; })
+		.x(function(d,i) {return x(years[i]);})
+		.y(function(d) {if(chartInfo.HIS_G[d.getFullYear()] > 0) {return y(Math.round(chartInfo.HIS_G[d.getFullYear()] / chartInfo.HIS_T[d.getFullYear()] * 100, 2)); }
+						else {return y(null)}})
+		.interpolate("basis");
+
+	var BLAline = d3.svg.line()
+		.defined(function(d) { return chartInfo.BLA_G[d.getFullYear()] != ""; })
+		.x(function(d,i) {return x(years[i]);})
+		.y(function(d) {if(chartInfo.BLA_G[d.getFullYear()] > 0) {return y(Math.round(chartInfo.BLA_G[d.getFullYear()] / chartInfo.BLA_T[d.getFullYear()] * 100, 2)); }
+						else {return y(null)}})
+		.interpolate("basis");
+
+	var APIline = d3.svg.line()
+		.defined(function(d) { return chartInfo.API_G[d.getFullYear()] != ""; })
+		.x(function(d,i) {return x(years[i]);})
+		.y(function(d) {if(chartInfo.API_G[d.getFullYear()] > 0) {return y(Math.round(chartInfo.API_G[d.getFullYear()] / chartInfo.API_T[d.getFullYear()] * 100, 2)); }
+						else {return y(null)}})
+		.interpolate("basis");
+
+	var WHIline = d3.svg.line()
+		.defined(function(d) { return chartInfo.WHI_G[d.getFullYear()] != ""; })
+		.x(function(d,i) {return x(years[i]);})
+		.y(function(d) {if(chartInfo.WHI_G[d.getFullYear()] > 0) {return y(Math.round(chartInfo.WHI_G[d.getFullYear()] / chartInfo.WHI_T[d.getFullYear()] * 100, 2)); }
+						else {return y(null)}})
+		.interpolate("basis");
+
+	var svg = d3.select("svg#selectedChart").append("g")
+		.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+	
+	svg.append("path")
+		.datum(years)
+		.attr("class", "IANline")
+		.attr("d", IANline);
+
+	svg.append("path")
+		.datum(years)
+		.attr("class", "HISline")
+		.attr("d", HISline);
+
+	svg.append("path")
+		.datum(years)
+		.attr("class", "BLAline")
+		.attr("d", BLAline);
+
+	svg.append("path")
+		.datum(years)
+		.attr("class", "APIline")
+		.attr("d", APIline);
+
+	svg.append("path")
+		.datum(years)
+		.attr("class", "WHIline")
+		.attr("d", WHIline);
+
+	svg.append("g")
+		.attr("class", "x axis")
+		.attr("transform", "translate(0," + thisHeight + ")")
+		.call(xAxis);
+
+	svg.append("g")
+		.attr("class", "y axis")
+		.call(yAxis);
 	}
 
 window.setInterval(function(){
@@ -328,3 +422,28 @@ function getRadioVal (groupName){
 function getRandomInt (min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
 }
+
+function resize() {
+  /* Find the new window dimensions */
+var width = parseInt(d3.select("#mapDiv").style("width")) - margin*2,
+height = parseInt(d3.select("#mapDiv").style("height")) - margin*2;
+
+/* Update the range of the scale with new width/height */
+xScale.range([0, width]).nice(d3.time.year);
+yScale.range([height, 0]).nice();
+
+/* Update the axis with the new scale */
+graph.select('.x.axis')
+  .attr("transform", "translate(0," + height + ")")
+  .call(xAxis);
+
+graph.select('.y.axis')
+  .call(yAxis);
+
+/* Force D3 to recalculate and update the line */
+graph.selectAll('.line')
+  .attr("d", line);
+}
+
+d3.select(window).on('resize', resize); 
+

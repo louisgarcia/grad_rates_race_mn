@@ -12,6 +12,14 @@
   -->
     <link href='http://fonts.googleapis.com/css?family=Open+Sans:400,600' rel='stylesheet' type='text/css'>
     <link rel="stylesheet" type="text/css" href="css/main.css">
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+
+    <!-- Optional theme -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
+
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
     <script src="js/lib/d3.v3.min.js"></script>
     <script src="js/lib/topojson.v1.min.js"></script>
     <script src="js/lib/underscore-min.js"></script>
@@ -19,55 +27,69 @@
   </head> 
 
   <body onload="loadData();">
-   <h1>Four-Year Graduation Rate by Rate/Ethnicity</h1>
-    <div id="left"></div>
-    <div id="content">
-      <div id="intro">
-        <p>The Four-Year Graduation Rate is a four-year, on-time graduation rate based on a cohort of first time ninth grade students plus transfers into the cohort within the four year period minus transfers out of the cohort within the four year period.</p>
-        <p>Survey determines if the student graudated, dropped out, is continuing, or in some cases the status is unknown. </p>
-        <p>The darker blue counties count as a Metropolitan Statistical Area as defined by the Census (<a href="http://www.census.gov/population/metro/data/def.html">source</a>). Data can be viewed by individual county, by a specific metropolitan region, by all metropolitan or non-metropolitan counties grouped together, or state-wide.</p>
-      </div>
-      <div id="mapDiv">
-        <svg id="mapMain"></svg>
-      </div>
-      <div id="countyInfo">
+    <div class="container">
+      <div class="jumbotron">
+        <h2>Four-Year Graduation Rate by Race/Ethnicity</h2>
+        <p>The Four-Year Graduation Rate is a four-year, on-time graduation rate based on a cohort of first time ninth grade students plus transfers into the cohort within the four-year period minus transfers out of the cohort within the four year period.</p>
+        <p>Region and statewide results are aggregated from the county level. Graduation rates are not provided at the county level if there were less than 10 graduates for race/ethnicity group.</p>
+        <p>The darker blue counties count as a Metropolitan Statistical Area as defined by the Census (<a href="http://www.census.gov/population/metro/data/def.html">source</a>). Data can be viewed by individual county, by a specific metropolitan region, by all metropolitan or non-metropolitan counties grouped together, or statewide.</p>
+    </div>
+    <div class="well">
+      <div class="row">
+        <div class="col-sm-4">
         <div id="dataToggle">
-          <input type="radio" name="displayOptions" value="state" onclick="toggleDisplay('state');"> By Region<br/>
-            <select id="statewideOptions" onchange="getSelectToggleRegion();" disabled>
-            </select> <br/>
-          <input type="radio" name="displayOptions" value="county" onclick="toggleDisplay('county');" checked> By County <br/>
-            <select id="countyOptions" onchange="getSelectToggleCounty();" >
-            </select> <br/><br/>
-          <input type="checkbox" name="cycle" value="cycle" id="cycleToggle"> Cycle every 10 seconds <br/> <br/>
+          <input type="radio" name="displayOptions" value="state" onclick="toggleDisplay('state');" checked> By Region:
+          <select id="statewideOptions" onchange="getSelectToggleRegion();" >
+          </select> 
         </div>
-        <div id="selectedData">
-          <div id="selectedTitle"></div>
-          <div id="selectedContent"></div>
-          <h2>Four Year Graduation Rate</h2>
-          <div class="resultsTable">
-            <table>
-                <tr>
-                  <th>American Indian / Alaskan Native</th>
-                  <th>Asian / Pacific Islander</th>
-                  <th>Hispanic</th>
-                  <th>Black</th>
-                  <th>White</th>
-                </tr>
-                <tr>
-                  <td><span class="AIANgrad"></span></td>
-                  <td><span class="APIgrad"></span></td>
-                  <td><span class="Hgrad"></span></td>
-                  <td><span class="BLAgrad"></span></td>
-                  <td><span class="Wgrad"></span></td>
-                </tr>
-            </table>
-          </div>
+        </div>
+        <div class="col-sm-4">
+          <input type="radio" name="displayOptions" value="county" onclick="toggleDisplay('county');" > By County: 
+          <select id="countyOptions" onchange="getSelectToggleCounty();" disabled >
+          </select>
+        </div>
+        <div class="col-sm-4">
+              <input type="checkbox" name="cycle" value="cycle" id="cycleToggle"> Cycle every 10 seconds
         </div>
       </div>
     </div>
-    <div class="footer">
-      <p>Created by <a href="http://www.louisgarcia.com">Louis Garcia</a>. Special thanks to Kristina Durivage for providing the code to have a clickable Minnesota map.
-      <p>Student data retreived from <a href="http://w20.education.state.mn.us/MDEAnalytics/Data.jsp">Minnesota Department of Education</a>
+    <div class="row">
+      <div id="map" class="col-sm-6">
+          <svg id="mapMain"></svg>
+      </div>
+      <div class="col-sm-5">
+        <table class="table">
+          <thead>
+            <tr>
+              <th class="col-md-1">American Indian /<br /> Alaskan Native</th>
+              <th class="col-md-1">Asian /<br /> Pacific Islander</th>
+              <th class="col-md-1">Hispanic</th>
+              <th class="col-md-1">Black</th>
+              <th class="col-md-1">White</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><span class="AIANgrad"></span></td>
+              <td><span class="APIgrad"></span></td>
+              <td><span class="Hgrad"></span></td>
+              <td><span class="BLAgrad"></span></td>
+              <td><span class="Wgrad"></span></td>
+            </tr>
+          </tbody>
+        </table>
+        <svg id="selectedChart">
+        </svg>
+      </div>
+    </div>
+    <div class="row">
+      <div class="jumbotron">
+        <h2>Relevant News Articles</h2>
+        <p><a href="http://www.msnbc.com/msnbc/student-proficiency-stagnant-race-gap-wide"> Education racial gap wide as ever according to NAEP - MSNBC</a></p>
+        <p><a href="http://www.washingtonpost.com/local/education/high-school-graduation-rates-at-historic-high/2014/04/28/84eb0122-cee0-11e3-937f-d3026234b51c_story.html">National high school graduation rates at historic high, but disparities still exist</a></p>
+        <p>Created by <a href="http://www.louisgarcia.com">Louis Garcia</a>. Special thanks to <a href="http://www.twitter.com/gelicia">Kristina</a> for code snippets.</p>
+        <p>Student data retreived from <a href="http://w20.education.state.mn.us/MDEAnalytics/Data.jsp">Minnesota Department of Education</a></p>
+      </div>
     </div>
   </body>
 </html>
